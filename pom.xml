@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.ojasare</groupId>
 	<artifactId>logindemo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1</version>
 	<name>logindemo</name>
 	<description>logindemo</description>
 	<url/>
