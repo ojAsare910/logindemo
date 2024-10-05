@@ -14,4 +14,8 @@ public interface UserService {
     UserDTO getUserById(Long id);
 
     User findByUsername(String username);
+
+    void generatePasswordResetToken(String email);
+
+    void resetPassword(String token, String newPassword);
 }

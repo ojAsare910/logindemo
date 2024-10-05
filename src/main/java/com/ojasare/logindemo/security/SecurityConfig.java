@@ -8,7 +8,6 @@ import com.ojasare.logindemo.repositories.RoleRepository;
 import com.ojasare.logindemo.repositories.UserRepository;
 import com.ojasare.logindemo.security.jwt.AuthEntryPointJwt;
 import com.ojasare.logindemo.security.jwt.AuthTokenFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.time.LocalDate;
 
@@ -31,13 +29,17 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true,
+@EnableMethodSecurity(
         securedEnabled = true,
         jsr250Enabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+
+    public SecurityConfig(AuthEntryPointJwt unauthorizedHandler) {
+        this.unauthorizedHandler = unauthorizedHandler;
+    }
+
+    private final AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -82,32 +84,38 @@ public class SecurityConfig {
                     .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_ADMIN)));
 
             if (!userRepository.existsByUserName("user1")) {
-                User user1 = new User("user1", "user1@example.com",
-                        passwordEncoder.encode("password1"));
-                user1.setAccountNonLocked(false);
-                user1.setAccountNonExpired(true);
-                user1.setCredentialsNonExpired(true);
-                user1.setEnabled(true);
-                user1.setCredentialsExpiryDate(LocalDate.now().plusYears(1));
-                user1.setAccountExpiryDate(LocalDate.now().plusYears(1));
-                user1.setTwoFactorEnabled(false);
-                user1.setSignUpMethod("email");
-                user1.setRole(userRole);
+                User user1 = User.builder()
+                        .userName("user1")
+                        .email("user1@email.com")
+                        .password(passwordEncoder.encode("password1"))
+                        .accountNonLocked(false)
+                        .accountNonExpired(true)
+                        .credentialsNonExpired(true)
+                        .enabled(true)
+                        .credentialsExpiryDate(LocalDate.now().plusYears(1))
+                        .accountExpiryDate(LocalDate.now().plusYears(1))
+                        .isTwoFactorEnabled(false)
+                        .signUpMethod("email")
+                        .role(userRole)
+                        .build();
                 userRepository.save(user1);
             }
 
             if (!userRepository.existsByUserName("admin")) {
-                User admin = new User("admin", "admin@example.com",
-                        passwordEncoder.encode("adminPass"));
-                admin.setAccountNonLocked(true);
-                admin.setAccountNonExpired(true);
-                admin.setCredentialsNonExpired(true);
-                admin.setEnabled(true);
-                admin.setCredentialsExpiryDate(LocalDate.now().plusYears(1));
-                admin.setAccountExpiryDate(LocalDate.now().plusYears(1));
-                admin.setTwoFactorEnabled(false);
-                admin.setSignUpMethod("email");
-                admin.setRole(adminRole);
+                User admin = User.builder()
+                        .userName("admin")
+                        .email("admin@example.com")
+                        .password(passwordEncoder.encode("adminPass"))
+                        .accountNonLocked(false)
+                        .accountNonExpired(true)
+                        .credentialsNonExpired(true)
+                        .enabled(true)
+                        .credentialsExpiryDate(LocalDate.now().plusYears(1))
+                        .accountExpiryDate(LocalDate.now().plusYears(1))
+                        .isTwoFactorEnabled(false)
+                        .signUpMethod("email")
+                        .role(adminRole)
+                        .build();
                 userRepository.save(admin);
             }
         };

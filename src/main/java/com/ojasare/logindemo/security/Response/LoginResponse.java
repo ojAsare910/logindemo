@@ -10,11 +10,11 @@ import java.util.List;
 public class LoginResponse {
     private String jwtToken;
 
-    private String username;
+    private String email;
     private List<String> roles;
 
-    public LoginResponse(String username, List<String> roles, String jwtToken) {
-        this.username = username;
+    public LoginResponse(String email, List<String> roles, String jwtToken) {
+        this.email = email;
         this.roles = roles;
         this.jwtToken = jwtToken;
     }
